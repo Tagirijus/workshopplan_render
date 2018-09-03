@@ -1,6 +1,6 @@
 from general.wplan import WPlan
 import os
-import weasyprint
+import pdfkit
 
 
 class Export(object):
@@ -60,9 +60,7 @@ class Export(object):
             file.write(self.template)
 
     def renderPDF(self):
-        pdf = weasyprint.HTML(self.temp_file).write_pdf()
-        with open(self.output_file, 'wb') as file:
-            file.write(pdf)
+        pdfkit.from_file(self.temp_file, self.output_file)
 
     def delHTML(self):
         os.remove(self.temp_file)
