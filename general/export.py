@@ -1,6 +1,5 @@
 from general.wplan import WPlan
 import os
-import pdfkit
 
 
 class Export(object):
@@ -41,7 +40,7 @@ class Export(object):
     def convertToPDF(self):
         self.replaceMeta()
         self.saveHTML()
-        self.renderPDF()
+        # self.renderPDF()
         self.delHTML()
 
     def replaceMeta(self):
@@ -58,9 +57,6 @@ class Export(object):
     def saveHTML(self):
         with open(self.temp_file, 'w') as file:
             file.write(self.template)
-
-    def renderPDF(self):
-        pdfkit.from_file(self.temp_file, self.output_file)
 
     def delHTML(self):
         os.remove(self.temp_file)
