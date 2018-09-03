@@ -1,0 +1,5 @@
+*.sublime*
+*.pyc
+test*.wplan
+test*.html
+test*.pdf
