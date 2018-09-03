@@ -2,6 +2,10 @@
 
 import argparse
 import json
+import os
+
+PATH_TO_PROJECT = os.path.dirname(os.path.realpath(__file__)).replace('/general', '/')
+DEFAULT_TEMPLATE = PATH_TO_PROJECT + 'template/template.html'
 
 
 class Settings(object):
@@ -17,29 +21,22 @@ class Settings(object):
     def initArguments(self):
         self.args = argparse.ArgumentParser(
             description=(
-                'A programm.'
+                'A programm for rendering .wplan to .pdf'
             )
         )
 
         self.args.add_argument(
-            'file',
-            help=(
-                'a file'
-            )
-        )
-
-        self.args.add_argument(
-            '-v',
-            '--verbose',
-            action='store_true',
-            help='verbose enabled'
-        )
-
-        self.args.add_argument(
-            '-d',
-            '--default',
+            '-f',
+            '--file',
             default=None,
-            help='default parameter'
+            help='The .wplan file'
+        )
+
+        self.args.add_argument(
+            '-t',
+            '--template',
+            default=DEFAULT_TEMPLATE,
+            help='An external HTML template file'
         )
 
         self.args = self.args.parse_args()
