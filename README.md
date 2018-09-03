@@ -1,21 +1,5 @@
-A programm for ...
-
-# Installation
-
-How to install it!
+A programm for rendering my `Workshop Plan` file to PDF with `weasyprint`.
 
 # Usage
 
-Do these things:
-
-	Command
-	Command
-	Command
-
-# To do
-
-- Code the programm!
-
-# Changelog
-
-Das Changelog gibt es [hier: CHANGELOG.md](CHANGELOG.md).
+`python3 run.py [WPLAN_FILE]` will create a `PDF` with the same new like the `.wplan` file in the same folder.
