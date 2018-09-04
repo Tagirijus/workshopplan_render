@@ -5,7 +5,7 @@ import json
 import os
 
 PATH_TO_PROJECT = os.path.dirname(os.path.realpath(__file__)).replace('/general', '/')
-DEFAULT_TEMPLATE = PATH_TO_PROJECT + 'template/template.html'
+DEFAULT_TEMPLATE = PATH_TO_PROJECT + 'src/template.odt'
 
 
 class Settings(object):
@@ -21,7 +21,7 @@ class Settings(object):
     def initArguments(self):
         self.args = argparse.ArgumentParser(
             description=(
-                'A programm for rendering .wplan to .pdf'
+                'A programm for rendering .wplan to .odt'
             )
         )
 
@@ -36,7 +36,7 @@ class Settings(object):
             '-t',
             '--template',
             default=DEFAULT_TEMPLATE,
-            help='An external HTML template file'
+            help='An external ODT template file'
         )
 
         self.args = self.args.parse_args()

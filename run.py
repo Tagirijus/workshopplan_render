@@ -1,5 +1,5 @@
 """
-A programm for converting .wplan to .pdf
+A programm for converting .wplan to .odt
 
 Author: Manuel Senfft (www.tagirijus.de)
 """

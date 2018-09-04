@@ -1,5 +1,6 @@
 from general.wplan import WPlan
 import os
+import secretary
 
 
 class Export(object):
@@ -8,27 +9,14 @@ class Export(object):
         self.wplan = self.initWPlan()
 
         self.template_file = template_file
-        self.template = self.initTemplate()
 
         self.output_file = self.initOutputFilename()
-        self.temp_file = self.initTempFilename()
-
-    def initTempFilename(self):
-        path = os.path.dirname(self.template_file) + '/'
-        return path + 'WPLAN_RENDER_TEMP.html'
 
     def initOutputFilename(self):
         if '.wplan' in self.wplan_file:
-            return self.wplan_file.replace('.wplan', '.pdf')
+            return self.wplan_file.replace('.wplan', '.odt')
         else:
-            return self.wplan_file + '.pdf'
-
-    def initTemplate(self):
-        if os.path.isfile(self.template_file):
-            with open(self.template_file) as file:
-                return file.read()
-        else:
-            return 'TEMPLATE FILE NOT FOUND ...'
+            return self.wplan_file + '.odt'
 
     def initWPlan(self):
         if os.path.isfile(self.wplan_file):
@@ -38,25 +26,34 @@ class Export(object):
             return WPlan()
 
     def convertToPDF(self):
-        self.replaceMeta()
-        self.saveHTML()
-        # self.renderPDF()
-        self.delHTML()
+        # TODO: get data to put into the ODT
+        workshop = {
+            'Title': 'Manu testst den Render!'
+        }
+        blocks = {}
 
-    def replaceMeta(self):
-        self.template = self.template.replace(
-            '{TITLE}', self.wplan.Workshop['Workshop']
-        )
-        self.template = self.template.replace(
-            '{DESCRIPTION}', self.wplan.Workshop['Description']
-        )
-        self.template = self.template.replace(
-            '{AUTHOR}', self.wplan.Workshop['Author']
-        )
+        if self.renderPDF(workshop, blocks):
+            print('Exported.')
+        else:
+            print('NOT exported !!!')
 
-    def saveHTML(self):
-        with open(self.temp_file, 'w') as file:
-            file.write(self.template)
+    def renderPDF(self, workshop, blocks):
+        engine = secretary.Renderer()
 
-    def delHTML(self):
-        os.remove(self.temp_file)
+        # try to replace stuff in the template
+        try:
+            result = engine.render(
+                self.template_file,
+                workshop=workshop,
+                blocks=blocks
+            )
+
+            output = open(self.output_file, 'wb')
+            output.write(result)
+            output.close()
+
+            return True
+
+        except Exception as e:
+            print('Log error: {}'.format(e))
+            return False
