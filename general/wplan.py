@@ -5,14 +5,18 @@ TYPES = ['discussion', 'theory', 'exercise', 'break']
 WORKSHOP = {
     'Workshop': None,
     'Author': None,
-    'Description': None
+    'Description': None,
+    'Time': 0
 }
 
 
-def toTime(integer):
+def toTime(integer, absolute=False):
+    """Integer is input in minutes."""
     try:
         hours = integer // 60
         minutes = integer - (hours * 60)
+        if absolute:
+            hours = hours % 24
         return '{}:{:02} h'.format(hours, minutes)
     except Exception:
         return '0:00 h'
@@ -22,6 +26,7 @@ class WPlan(object):
     def __init__(self, string):
         self.Blocks = []
         self.Workshop = WORKSHOP
+        self.init_time = 0
         self.strToBlocks(string)
 
     def __delitem__(self, key):
@@ -40,70 +45,79 @@ class WPlan(object):
         position = 0
         for x in string.split('\n\n'):
             try:
-                block = yaml.load(x)
-                block['pos_start'] = position
-                block['pos_end'] = position + len(x)
-                position = block['pos_end'] + 2
+                data = yaml.load(x)
+                data['Position start'] = position
+                data['Position end'] = position + len(x)
+                position = data['Position end'] + 2
             except Exception:
                 continue
-            if 'Title' in block:
-                self.Blocks.append(block)
-            elif 'Workshop' in block:
-                self.Workshop = block
+            if 'Title' in data:
+                self.initBlock(data)
+            elif 'Workshop' in data:
+                self.initWorkshop(data)
+        self.initAllData()
 
-    def getDurationStr(self, index):
+    def initBlock(self, data):
         try:
-            return toTime(self.Blocks[index]['Length'])
-        except Exception as e:
-            print(e)
-            return toTime(0)
+            data['Length string'] = toTime(data['Length'])
+        except Exception:
+            pass
+        self.Blocks.append(data)
 
-    def getTimeSum(self):
+    def initWorkshop(self, data):
+        try:
+            data['Time string'] = toTime(data['Time'], True)
+        except Exception:
+            pass
+        self.Workshop = WORKSHOP
+        self.Workshop.update(data)
+
+    def initAllData(self):
+        # init additional workshop variables
+        self.Workshop['Materials'] = {}
+
+        # init counter for timings
         time = 0
-        for x in self.Blocks:
+        start = self.Workshop['Time']
+
+        for i, x in enumerate(self.Blocks):
+
+            # add additional timing informatino of the blocks
+            self.Blocks[i]['Start relative'] = time
+            self.Blocks[i]['Start relative string'] = toTime(time)
+            self.Blocks[i]['Start absolute'] = time + start
+            self.Blocks[i]['Start absolute string'] = toTime(time + start, True)
+            time += x['Length']
+            self.Blocks[i]['End relative'] = time
+            self.Blocks[i]['End relative string'] = toTime(time)
+            self.Blocks[i]['End absolute'] = time + start
+            self.Blocks[i]['End absolute string'] = toTime(time + start, True)
+
+            # add additional material information for the workshop
             try:
-                time += int(x['Length'])
+                for m in x['Material']:
+                    if m not in self.Workshop['Materials']:
+                        self.Workshop['Materials'][m] = [x['Title']]
+                    else:
+                        self.Workshop['Materials'][m].append(x['Title'])
             except Exception:
                 pass
-        return toTime(time)
+
+        # add additional information about the workshop times
+        self.Workshop['Start relative'] = 0
+        self.Workshop['Start relative string'] = toTime(0)
+        self.Workshop['Start absolute'] = start
+        self.Workshop['Start absolute string'] = toTime(start, True)
+        self.Workshop['End relative'] = time
+        self.Workshop['End relative string'] = toTime(time)
+        self.Workshop['End absolute'] = time + start
+        self.Workshop['End absolute string'] = toTime(time + start, True)
+        self.Workshop['Length'] = time
+        self.Workshop['Length string'] = toTime(time)
 
     def getActualIndex(self, cursor_pos):
         block_index = -1
         for i, x in enumerate(self.Blocks):
-            if cursor_pos >= x['pos_start'] and cursor_pos <= x['pos_end']:
+            if cursor_pos >= x['Position start'] and cursor_pos <= x['Position end']:
                 block_index = i
         return block_index
-
-    def getActualTime(self, index):
-        start = 0
-        for x in self.Blocks[:index]:
-            try:
-                start += int(x['Length'])
-            except Exception:
-                pass
-        try:
-            end = start + int(self.Blocks[index]['Length'])
-        except Exception:
-            end = start
-
-        return start, end
-
-    def getActualTimeStr(self, index):
-        start, end = self.getActualTime(index)
-        return '{} - {}'.format(
-            toTime(start),
-            toTime(end)
-        )
-
-    def getMaterials(self):
-        materials = {}
-        for x in self.Blocks:
-            try:
-                for m in x['Material']:
-                    if m not in materials:
-                        materials[m] = [x['Title']]
-                    else:
-                        materials[m].append(x['Title'])
-            except Exception:
-                pass
-        return materials
