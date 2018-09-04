@@ -26,13 +26,10 @@ class Export(object):
             return WPlan()
 
     def convertToPDF(self):
-        # TODO: get data to put into the ODT
-        workshop = {
-            'Title': 'Manu testst den Render!'
-        }
-        blocks = {}
-
-        if self.renderPDF(workshop, blocks):
+        if self.renderPDF(
+            self.wplan.Workshop,
+            self.wplan.Blocks
+        ):
             print('Exported.')
         else:
             print('NOT exported !!!')
