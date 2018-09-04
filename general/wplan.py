@@ -69,8 +69,9 @@ class WPlan(object):
             data['Time string'] = toTime(data['Time'], True)
         except Exception:
             pass
-        self.Workshop = WORKSHOP
-        self.Workshop.update(data)
+        new_data = WORKSHOP.copy()
+        new_data.update(data)
+        self.Workshop = new_data
 
     def initAllData(self):
         # init additional workshop variables
