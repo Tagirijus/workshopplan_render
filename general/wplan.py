@@ -106,6 +106,10 @@ class WPlan(object):
             ratio = round((length / overall) * 100)
             self.Workshop['Types'][t]['Length percentage'] = ratio
             self.Workshop['Types'][t]['Length string'] = toTime(length)
+        self.Workshop['Types sorted'] = sorted(
+            self.Workshop['Types'],
+            key=lambda x: -self.Workshop['Types'][x]['Length']
+        )
 
     def addBlockTypeLength(self, block):
         block_type = block['Type']
