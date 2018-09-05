@@ -43,7 +43,7 @@ class WPlan(object):
 
     def strToBlocks(self, string):
         position = 0
-        for x in string.split('\n\n'):
+        for x in string.split('---\n'):
             try:
                 data = yaml.load(x)
                 data['Position start'] = position
