@@ -74,8 +74,9 @@ class WPlan(object):
         self.Workshop = new_data
 
     def initAllData(self):
-        # init additional workshop variables
+        # init additional global variables
         self.Workshop['Materials'] = {}
+        self.Workshop['Types'] = {}
 
         # init counter for timings
         time = 0
@@ -89,8 +90,30 @@ class WPlan(object):
             # add additional material information for the workshop
             self.initWorkshopMaterial(x)
 
+            # add all time for a specific block type
+            self.addBlockTypeLength(x)
+
         # add additional information about the workshop times
         self.initWorkshopTime(time, start)
+
+        # calculate ratios
+        self.initTypeRatios()
+
+    def initTypeRatios(self):
+        overall = self.Workshop['Length']
+        for t in self.Workshop['Types']:
+            length = self.Workshop['Types'][t]['Length']
+            ratio = round((length / overall) * 100)
+            self.Workshop['Types'][t]['Length percentage'] = ratio
+            self.Workshop['Types'][t]['Length string'] = toTime(length)
+
+    def addBlockTypeLength(self, block):
+        block_type = block['Type']
+        block_length = block['Length']
+        if block_type not in self.Workshop['Types']:
+            self.Workshop['Types'][block_type] = {'Length': block_length}
+        else:
+            self.Workshop['Types'][block_type]['Length'] += block_length
 
     def initBlockTime(self, index, time, start):
         self.Blocks[index]['Start relative'] = time
