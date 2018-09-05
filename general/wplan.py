@@ -83,28 +83,38 @@ class WPlan(object):
 
         for i, x in enumerate(self.Blocks):
 
-            # add additional timing informatino of the blocks
-            self.Blocks[i]['Start relative'] = time
-            self.Blocks[i]['Start relative string'] = toTime(time)
-            self.Blocks[i]['Start absolute'] = time + start
-            self.Blocks[i]['Start absolute string'] = toTime(time + start, True)
-            time += x['Length']
-            self.Blocks[i]['End relative'] = time
-            self.Blocks[i]['End relative string'] = toTime(time)
-            self.Blocks[i]['End absolute'] = time + start
-            self.Blocks[i]['End absolute string'] = toTime(time + start, True)
+            # add additional timing information of the blocks
+            time = self.initBlockTime(i, time, start)
 
             # add additional material information for the workshop
-            try:
-                for m in x['Material']:
-                    if m not in self.Workshop['Materials']:
-                        self.Workshop['Materials'][m] = [x['Title']]
-                    else:
-                        self.Workshop['Materials'][m].append(x['Title'])
-            except Exception:
-                pass
+            self.initWorkshopMaterial(x)
 
         # add additional information about the workshop times
+        self.initWorkshopTime(time, start)
+
+    def initBlockTime(self, index, time, start):
+        self.Blocks[index]['Start relative'] = time
+        self.Blocks[index]['Start relative string'] = toTime(time)
+        self.Blocks[index]['Start absolute'] = time + start
+        self.Blocks[index]['Start absolute string'] = toTime(time + start, True)
+        time += self.Blocks[index]['Length']
+        self.Blocks[index]['End relative'] = time
+        self.Blocks[index]['End relative string'] = toTime(time)
+        self.Blocks[index]['End absolute'] = time + start
+        self.Blocks[index]['End absolute string'] = toTime(time + start, True)
+        return time
+
+    def initWorkshopMaterial(self, block):
+        try:
+            for m in block['Material']:
+                if m not in self.Workshop['Materials']:
+                    self.Workshop['Materials'][m] = [block['Title']]
+                else:
+                    self.Workshop['Materials'][m].append(block['Title'])
+        except Exception:
+            pass
+
+    def initWorkshopTime(self, time, start):
         self.Workshop['Start relative'] = 0
         self.Workshop['Start relative string'] = toTime(0)
         self.Workshop['Start absolute'] = start
