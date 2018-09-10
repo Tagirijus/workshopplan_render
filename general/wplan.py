@@ -113,7 +113,7 @@ class WPlan(object):
 
     def addBlockTypeLength(self, block):
         block_type = block['Type']
-        block_length = block['Length']
+        block_length = block['Length'] if type(block['Length']) is int else 0
         if block_type not in self.Workshop['Types']:
             self.Workshop['Types'][block_type] = {'Length': block_length}
         else:
@@ -124,7 +124,10 @@ class WPlan(object):
         self.Blocks[index]['Start relative string'] = toTime(time)
         self.Blocks[index]['Start absolute'] = time + start
         self.Blocks[index]['Start absolute string'] = toTime(time + start, True)
-        time += self.Blocks[index]['Length']
+        try:
+            time += self.Blocks[index]['Length']
+        except Exception:
+            pass
         self.Blocks[index]['End relative'] = time
         self.Blocks[index]['End relative string'] = toTime(time)
         self.Blocks[index]['End absolute'] = time + start
