@@ -47,7 +47,10 @@ class WPlan(object):
             try:
                 data = yaml.load(x)
                 data['Position start'] = position
-                data['Position end'] = position + len(x)
+                data['Position end'] = position + len(x) + 2
+                data['Position start title'] = data['Position start'] + 4
+                title_end = x.find('\n') + 4
+                data['Position end title'] = data['Position start'] + title_end
                 position = data['Position end'] + 2
             except Exception:
                 continue
