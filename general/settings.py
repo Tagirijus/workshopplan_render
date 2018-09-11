@@ -21,7 +21,7 @@ class Settings(object):
     def initArguments(self):
         self.args = argparse.ArgumentParser(
             description=(
-                'A programm for rendering .wplan to .odt'
+                'A programm for rendering .wplan to .odt or .md'
             )
         )
 
@@ -37,6 +37,14 @@ class Settings(object):
             '--template',
             default=DEFAULT_TEMPLATE,
             help='An external ODT template file'
+        )
+
+        self.args.add_argument(
+            '-md',
+            '--markdown',
+            action='store_true',
+            default=False,
+            help='Generate a markdown presentation from wplan'
         )
 
         self.args = self.args.parse_args()

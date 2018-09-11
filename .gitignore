@@ -4,4 +4,5 @@ test*.wplan
 test*.html
 test*.pdf
 test*.odt
+test*.md
 .~lock*

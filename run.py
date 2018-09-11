@@ -1,5 +1,5 @@
 """
-A programm for converting .wplan to .odt
+A programm for converting .wplan to .odt or .md
 
 Author: Manuel Senfft (www.tagirijus.de)
 """
@@ -10,10 +10,15 @@ from general.export import Export
 
 def main(settings):
     """Run the programm."""
-    wplan_file = settings.args.file
-    template_file = settings.args.template
-    E = Export(wplan_file, template_file)
-    E.convertToPDF()
+    E = Export(
+        settings.args.file,
+        settings.args.template
+    )
+
+    if settings.args.markdown:
+        E.convertToMD()
+    else:
+        E.convertToODT()
 
 
 if __name__ == '__main__':
