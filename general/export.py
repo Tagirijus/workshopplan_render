@@ -74,7 +74,7 @@ class Export(object):
             return True
 
         except Exception as e:
-            print('Log error: {}'.format(e))
+            print('WPlan Render, Log error: {}'.format(e))
             return False
 
     def generateMD(self):
@@ -93,7 +93,12 @@ class Export(object):
     def generateMDContent(self):
         block = []
         for x in self.wplan.Blocks:
-            block.append(
-                '## {Title}\n\n_({Type})_'.format(**x)
-            )
+            if 'Notes' in x:
+                block.append(
+                    '## {Title}\n\n_({Type})_\n\nNote:\n{Notes}'.format(**x)
+                )
+            else:
+                block.append(
+                    '## {Title}\n\n_({Type})_'.format(**x)
+                )
         return '\n\n---\n\n'.join(block)
