@@ -93,12 +93,16 @@ class Export(object):
     def generateMDContent(self):
         block = []
         for x in self.wplan.Blocks:
+            base = (
+                '## {Title}\n\n_({Type})_\n\nNote:\n'
+                + '{Start relative string} bis {End relative string}'
+                + ' ({Start absolute string} bis {End absolute string})\n'
+            )
             if 'Notes' in x:
-                block.append(
-                    '## {Title}\n\n_({Type})_\n\nNote:\n{Notes}'.format(**x)
-                )
+                appendMe = base + '{Notes}'.format(**x)
             else:
-                block.append(
-                    '## {Title}\n\n_({Type})_'.format(**x)
-                )
+                appendMe = base.format(**x)
+            block.append(
+                appendMe.format(**x)
+            )
         return '\n\n---\n\n'.join(block)
